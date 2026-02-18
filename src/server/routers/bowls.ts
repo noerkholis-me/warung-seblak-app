@@ -1,16 +1,21 @@
+import { Preferences } from "@/features/order/schemas/order.schema";
 import { publicProcedure, router } from "../trpc";
 import { z } from "zod";
+import { TRPCError } from "@trpc/server";
 
 export const bowlsRouter = router({
   getById: publicProcedure
     .input(z.object({ id: z.string() }))
-    .query(({ input, ctx }) => {
-      const bowl = ctx.prisma.bowl.findUnique({
+    .query(async ({ input, ctx }) => {
+      const bowl = await ctx.prisma.bowl.findUnique({
         where: { id: input.id },
       });
 
       if (!bowl) {
-        throw new Error("Wadah tidak ditemukan");
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Wadah tidak ditemukan",
+        });
       }
 
       return bowl;
@@ -18,8 +23,8 @@ export const bowlsRouter = router({
 
   getActiveOrder: publicProcedure
     .input(z.object({ bowlId: z.string() }))
-    .query(({ input, ctx }) => {
-      const order = ctx.prisma.order.findFirst({
+    .query(async ({ input, ctx }) => {
+      const order = await ctx.prisma.order.findFirst({
         where: {
           bowlId: input.bowlId,
           status: { in: ["waiting", "confirmed", "preparing", "served"] },
@@ -27,6 +32,15 @@ export const bowlsRouter = router({
         orderBy: { createdAt: "desc" },
       });
 
-      return order;
+      if (!order) {
+        return { order: null };
+      }
+
+      return {
+        order: {
+          ...order,
+          preferences: order.preferences as Preferences,
+        },
+      };
     }),
 });

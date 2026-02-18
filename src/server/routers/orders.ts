@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { router, publicProcedure } from "../trpc";
 import { createOrderSchema } from "@/features/order/schemas/order.schema";
+import { OrderStatus } from "@/generated/prisma/enums";
 
 export const ordersRouter = router({
   create: publicProcedure
@@ -79,7 +80,7 @@ export const ordersRouter = router({
           where: { id: input.orderId },
           data: {
             totalPrice: input.totalPrice,
-            status: "confirmed",
+            status: OrderStatus.confirmed,
           },
         });
       });
@@ -91,13 +92,7 @@ export const ordersRouter = router({
     .input(
       z.object({
         orderId: z.string(),
-        status: z.enum([
-          "waiting",
-          "confirmed",
-          "preparing",
-          "served",
-          "completed",
-        ]),
+        status: z.nativeEnum(OrderStatus),
       }),
     )
     .mutation(async ({ input, ctx }) => {
@@ -112,7 +107,14 @@ export const ordersRouter = router({
   listActive: publicProcedure.query(async ({ ctx }) => {
     const orders = await ctx.prisma.order.findMany({
       where: {
-        status: { in: ["waiting", "confirmed", "preparing", "served"] },
+        status: {
+          in: [
+            OrderStatus.waiting,
+            OrderStatus.confirmed,
+            OrderStatus.preparing,
+            OrderStatus.served,
+          ],
+        },
       },
       orderBy: { createdAt: "desc" },
       take: 50,
