@@ -1,4 +1,36 @@
-# Add patterns to ignore here, one per line
-# Example:
-# *.log
-# tmp/
+# Dependencies & build artifacts
+node_modules/
+.next/
+dist/
+build/
+
+# Generated files (Prisma client is auto-generated, not useful context)
+src/generated/
+
+# Lock files (huge, no value for LLM analysis)
+package-lock.json
+pnpm-lock.yaml
+yarn.lock
+
+# Environment & secrets
+.env
+.env.*
+
+# IDE & OS files
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
+
+# Repomix output itself
+repomix-output.*
+
+# Config files that add noise
+tsconfig.tsbuildinfo
+next-env.d.ts
+postcss.config.mjs
+components.json
+
+# UI component library (shadcn — standard, not project-specific logic)
+src/components/ui/

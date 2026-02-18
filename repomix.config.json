@@ -10,15 +10,15 @@
     "fileSummary": true,
     "directoryStructure": true,
     "files": true,
-    "removeComments": false,
-    "removeEmptyLines": false,
+    "removeComments": true,
+    "removeEmptyLines": true,
     "compress": false,
     "topFilesLength": 5,
-    "showLineNumbers": false,
-    "truncateBase64": false,
+    "showLineNumbers": true,
+    "truncateBase64": true,
     "copyToClipboard": false,
-    "includeFullDirectoryStructure": false,
-    "tokenCountTree": false,
+    "includeFullDirectoryStructure": true,
+    "tokenCountTree": true,
     "git": {
       "sortByChanges": true,
       "sortByChangesMaxCommits": 100,
@@ -38,6 +38,6 @@
     "enableSecurityCheck": true
   },
   "tokenCount": {
-    "encoding": "o200k_base"
+    "encoding": "cl100k_base"
   }
 }
