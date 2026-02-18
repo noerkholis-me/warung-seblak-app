@@ -1,5 +1,10 @@
 import { z } from "zod";
-import { router, publicProcedure } from "../trpc";
+import {
+  router,
+  publicProcedure,
+  kasirProcedure,
+  dapurProcedure,
+} from "../trpc";
 import { createOrderSchema } from "@/features/order/schemas/order.schema";
 import { OrderStatus } from "@/generated/prisma/enums";
 
@@ -54,7 +59,7 @@ export const ordersRouter = router({
       return { order };
     }),
 
-  updatePrice: publicProcedure
+  updatePrice: kasirProcedure
     .input(
       z.object({
         orderId: z.string(),
@@ -88,11 +93,11 @@ export const ordersRouter = router({
       return { order: updated };
     }),
 
-  updateStatus: publicProcedure
+  updateStatus: kasirProcedure
     .input(
       z.object({
         orderId: z.string(),
-        status: z.nativeEnum(OrderStatus),
+        status: z.enum(OrderStatus),
       }),
     )
     .mutation(async ({ input, ctx }) => {
@@ -104,7 +109,9 @@ export const ordersRouter = router({
       return { order };
     }),
 
-  listActive: publicProcedure.query(async ({ ctx }) => {
+  listActive: kasirProcedure.query(async ({ ctx }) => {
+    console.log(ctx.role);
+
     const orders = await ctx.prisma.order.findMany({
       where: {
         status: {
@@ -122,4 +129,34 @@ export const ordersRouter = router({
 
     return { orders };
   }),
+
+  listActiveDapur: dapurProcedure.query(async ({ ctx }) => {
+    const orders = await ctx.prisma.order.findMany({
+      where: {
+        status: {
+          in: [OrderStatus.confirmed, OrderStatus.preparing],
+        },
+      },
+      orderBy: { createdAt: "desc" },
+      take: 50,
+    });
+
+    return { orders };
+  }),
+
+  updateStatusDapur: dapurProcedure
+    .input(
+      z.object({
+        orderId: z.string(),
+        status: z.enum(OrderStatus),
+      }),
+    )
+    .mutation(async ({ input, ctx }) => {
+      const order = await ctx.prisma.order.update({
+        where: { id: input.orderId },
+        data: { status: input.status },
+      });
+
+      return { order };
+    }),
 });
