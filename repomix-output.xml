@@ -1,0 +1,2116 @@
+This file is a merged representation of the entire codebase, combined into a single document by Repomix.
+The content has been processed where comments have been removed, empty lines have been removed, line numbers have been added.
+
+<file_summary>
+This section contains a summary of this file.
+
+<purpose>
+This file contains a packed representation of the entire repository's contents.
+It is designed to be easily consumable by AI systems for analysis, code review,
+or other automated processes.
+</purpose>
+
+<file_format>
+The content is organized as follows:
+1. This summary section
+2. Repository information
+3. Directory structure
+4. Repository files (if enabled)
+5. Multiple file entries, each consisting of:
+  - File path as an attribute
+  - Full contents of the file
+</file_format>
+
+<usage_guidelines>
+- This file should be treated as read-only. Any changes should be made to the
+  original repository files, not this packed version.
+- When processing this file, use the file path to distinguish
+  between different files in the repository.
+- Be aware that this file may contain sensitive information. Handle it with
+  the same level of security as you would the original repository.
+</usage_guidelines>
+
+<notes>
+- Some files may have been excluded based on .gitignore rules and Repomix's configuration
+- Binary files are not included in this packed representation. Please refer to the Repository Structure section for a complete list of file paths, including binary files
+- Files matching patterns in .gitignore are excluded
+- Files matching default ignore patterns are excluded
+- Code comments have been removed from supported file types
+- Empty lines have been removed from all files
+- Line numbers have been added to the beginning of each line
+- Long base64 data strings (e.g., data:image/png;base64,...) have been truncated to reduce token count
+- Files are sorted by Git change count (files with more changes are at the bottom)
+</notes>
+
+</file_summary>
+
+<directory_structure>
+.gitignore
+.repomixignore
+eslint.config.mjs
+next.config.ts
+package.json
+prisma.config.ts
+prisma/migrations/20260217145618_init_db/migration.sql
+prisma/migrations/20260218085148_add_enums/migration.sql
+prisma/migrations/migration_lock.toml
+prisma/schema.prisma
+prisma/seed.ts
+public/file.svg
+public/globe.svg
+public/next.svg
+public/vercel.svg
+public/window.svg
+README.md
+repomix.config.json
+src/app/api/bowls/[bowlId]/route.ts
+src/app/api/trpc/[trpc]/route.ts
+src/app/favicon.ico
+src/app/globals.css
+src/app/kasir/page.tsx
+src/app/layout.tsx
+src/app/order/[bowlId]/page.tsx
+src/app/order/track/[orderId]/page.tsx
+src/app/page.tsx
+src/features/kasir/components/BowlScanner.tsx
+src/features/kasir/components/KasirDashboard.tsx
+src/features/kasir/components/OrderCard.tsx
+src/features/kasir/hooks/useKasirRealtime.ts
+src/features/kasir/schemas/kasir.schema.ts
+src/features/order/components/OrderForm.tsx
+src/features/order/components/OrderTracking.tsx
+src/features/order/hooks/useOrderRealtime.ts
+src/features/order/schemas/order.schema.ts
+src/lib/prisma.ts
+src/lib/supabase.ts
+src/lib/trpc/client.ts
+src/lib/trpc/Provider.tsx
+src/lib/trpc/server.ts
+src/lib/types/order.types.ts
+src/lib/utils.ts
+src/server/context.ts
+src/server/routers/_app.ts
+src/server/routers/bowls.ts
+src/server/routers/orders.ts
+src/server/routers/payments.ts
+src/server/trpc.ts
+tsconfig.json
+</directory_structure>
+
+<files>
+This section contains the contents of the repository's files.
+
+<file path=".repomixignore">
+ 1: # Dependencies & build artifacts
+ 2: node_modules/
+ 3: .next/
+ 4: dist/
+ 5: build/
+ 6: 
+ 7: # Generated files (Prisma client is auto-generated, not useful context)
+ 8: src/generated/
+ 9: 
+10: # Lock files (huge, no value for LLM analysis)
+11: package-lock.json
+12: pnpm-lock.yaml
+13: yarn.lock
+14: 
+15: # Environment & secrets
+16: .env
+17: .env.*
+18: 
+19: # IDE & OS files
+20: .vscode/
+21: .idea/
+22: *.swp
+23: .DS_Store
+24: Thumbs.db
+25: 
+26: # Repomix output itself
+27: repomix-output.*
+28: 
+29: # Config files that add noise
+30: tsconfig.tsbuildinfo
+31: next-env.d.ts
+32: postcss.config.mjs
+33: components.json
+34: 
+35: # UI component library (shadcn — standard, not project-specific logic)
+36: src/components/ui/
+</file>
+
+<file path="prisma/migrations/20260218085148_add_enums/migration.sql">
+ 1: /*
+ 2:   Warnings:
+ 3:   - The `payment_method` column on the `orders` table would be dropped and recreated. This will lead to data loss if there is data in the column.
+ 4:   - The `payment_status` column on the `orders` table would be dropped and recreated. This will lead to data loss if there is data in the column.
+ 5:   - The `status` column on the `orders` table would be dropped and recreated. This will lead to data loss if there is data in the column.
+ 6:   - The `midtrans_status` column on the `payments` table would be dropped and recreated. This will lead to data loss if there is data in the column.
+ 7:   - Changed the type of `payment_method` on the `payments` table. No cast exists, the column would be dropped and recreated, which cannot be done if there is data, since the column is required.
+ 8: */
+ 9: CREATE TYPE "OrderStatus" AS ENUM ('waiting', 'confirmed', 'preparing', 'served', 'completed');
+10: CREATE TYPE "PaymentStatus" AS ENUM ('pending', 'paid');
+11: CREATE TYPE "PaymentMethod" AS ENUM ('cash', 'qris');
+12: CREATE TYPE "MidtransStatus" AS ENUM ('pending', 'settlement', 'expire', 'cancel', 'deny', 'failure');
+13: ALTER TABLE "orders" DROP COLUMN "payment_method",
+14: ADD COLUMN     "payment_method" "PaymentMethod",
+15: DROP COLUMN "payment_status",
+16: ADD COLUMN     "payment_status" "PaymentStatus" NOT NULL DEFAULT 'pending',
+17: DROP COLUMN "status",
+18: ADD COLUMN     "status" "OrderStatus" NOT NULL DEFAULT 'waiting';
+19: ALTER TABLE "payments" DROP COLUMN "payment_method",
+20: ADD COLUMN     "payment_method" "PaymentMethod" NOT NULL,
+21: DROP COLUMN "midtrans_status",
+22: ADD COLUMN     "midtrans_status" "MidtransStatus";
+</file>
+
+<file path="repomix.config.json">
+ 1: {
+ 2:   "$schema": "https://repomix.com/schemas/latest/schema.json",
+ 3:   "input": {
+ 4:     "maxFileSize": 52428800
+ 5:   },
+ 6:   "output": {
+ 7:     "filePath": "repomix-output.xml",
+ 8:     "style": "xml",
+ 9:     "parsableStyle": false,
+10:     "fileSummary": true,
+11:     "directoryStructure": true,
+12:     "files": true,
+13:     "removeComments": true,
+14:     "removeEmptyLines": true,
+15:     "compress": false,
+16:     "topFilesLength": 5,
+17:     "showLineNumbers": true,
+18:     "truncateBase64": true,
+19:     "copyToClipboard": false,
+20:     "includeFullDirectoryStructure": true,
+21:     "tokenCountTree": true,
+22:     "git": {
+23:       "sortByChanges": true,
+24:       "sortByChangesMaxCommits": 100,
+25:       "includeDiffs": false,
+26:       "includeLogs": false,
+27:       "includeLogsCount": 50
+28:     }
+29:   },
+30:   "include": [],
+31:   "ignore": {
+32:     "useGitignore": true,
+33:     "useDotIgnore": true,
+34:     "useDefaultPatterns": true,
+35:     "customPatterns": []
+36:   },
+37:   "security": {
+38:     "enableSecurityCheck": true
+39:   },
+40:   "tokenCount": {
+41:     "encoding": "cl100k_base"
+42:   }
+43: }
+</file>
+
+<file path="src/app/kasir/page.tsx">
+ 1: import prisma from "@/lib/prisma";
+ 2: import { KasirDashboard } from "@/features/kasir/components/KasirDashboard";
+ 3: import type { KasirOrder } from "@/features/kasir/hooks/useKasirRealtime";
+ 4: import { OrderStatus } from "@/generated/prisma/enums";
+ 5: export const dynamic = "force-dynamic";
+ 6: export default async function KasirPage() {
+ 7:   const orders = await prisma.order.findMany({
+ 8:     where: {
+ 9:       status: {
+10:         in: [
+11:           OrderStatus.waiting,
+12:           OrderStatus.confirmed,
+13:           OrderStatus.preparing,
+14:           OrderStatus.served,
+15:         ],
+16:       },
+17:     },
+18:     orderBy: { createdAt: "desc" },
+19:     take: 50,
+20:   });
+21:   const initialOrders: KasirOrder[] = orders.map((o) => ({
+22:     id: o.id,
+23:     bowlId: o.bowlId,
+24:     customerName: o.customerName,
+25:     preferences: o.preferences as KasirOrder["preferences"],
+26:     totalPrice: o.totalPrice,
+27:     paymentStatus: o.paymentStatus,
+28:     paymentMethod: o.paymentMethod,
+29:     status: o.status,
+30:     createdAt: o.createdAt.toISOString(),
+31:   }));
+32:   return <KasirDashboard initialOrders={initialOrders} />;
+33: }
+</file>
+
+<file path="src/features/kasir/components/BowlScanner.tsx">
+ 1: "use client";
+ 2: import { useState } from "react";
+ 3: import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+ 4: import { Input } from "@/components/ui/input";
+ 5: import { Button } from "@/components/ui/button";
+ 6: import { Label } from "@/components/ui/label";
+ 7: import { trpc } from "@/lib/trpc/client";
+ 8: import { Preferences } from "@/features/order/schemas/order.schema";
+ 9: interface BowlScannerProps {
+10:   onBowlFound: (
+11:     bowlId: string,
+12:     order: {
+13:       id: string;
+14:       customerName: string;
+15:       preferences: Preferences;
+16:       totalPrice: number | null;
+17:       status: string;
+18:     } | null,
+19:   ) => void;
+20: }
+21: export function BowlScanner({ onBowlFound }: BowlScannerProps) {
+22:   const [bowlId, setBowlId] = useState("");
+23:   const [error, setError] = useState<string | null>(null);
+24:   const [isLoading, setIsLoading] = useState(false);
+25:   const utils = trpc.useUtils();
+26:   const handleScan = async () => {
+27:     if (!bowlId.trim()) return;
+28:     setError(null);
+29:     setIsLoading(true);
+30:     try {
+31:       const id = bowlId.trim();
+32:       // Verify bowl exists
+33:       await utils.bowls.getById.fetch({ id });
+34:       // Get active order for the bowl
+35:       const { order } = await utils.bowls.getActiveOrder.fetch({ bowlId: id });
+36:       onBowlFound(id, order);
+37:       setBowlId("");
+38:     } catch (err) {
+39:       setError(err instanceof Error ? err.message : "Terjadi kesalahan");
+40:     } finally {
+41:       setIsLoading(false);
+42:     }
+43:   };
+44:   return (
+45:     <Card>
+46:       <CardHeader>
+47:         <CardTitle className="text-base">Scan QR Wadah</CardTitle>
+48:       </CardHeader>
+49:       <CardContent className="space-y-3">
+50:         <div className="space-y-1">
+51:           <Label htmlFor="bowl-input">ID Wadah</Label>
+52:           <div className="flex gap-2">
+53:             <Input
+54:               id="bowl-input"
+55:               placeholder="Scan atau ketik ID wadah..."
+56:               value={bowlId}
+57:               onChange={(e) => setBowlId(e.target.value)}
+58:               onKeyDown={(e) => e.key === "Enter" && handleScan()}
+59:               autoFocus
+60:               disabled={isLoading}
+61:             />
+62:             <Button onClick={handleScan} disabled={isLoading || !bowlId}>
+63:               {isLoading ? "..." : "Cek"}
+64:             </Button>
+65:           </div>
+66:         </div>
+67:         {error && <p className="text-sm text-red-500">{error}</p>}
+68:         <p className="text-xs text-muted-foreground">
+69:           Arahkan scanner ke QR code pada wadah, atau ketik ID secara manual
+70:         </p>
+71:       </CardContent>
+72:     </Card>
+73:   );
+74: }
+</file>
+
+<file path="src/features/kasir/components/KasirDashboard.tsx">
+ 1: "use client";
+ 2: import { useState } from "react";
+ 3: import {
+ 4:   useKasirRealtime,
+ 5:   KasirOrder,
+ 6: } from "@/features/kasir/hooks/useKasirRealtime";
+ 7: import { OrderCard } from "@/features/kasir/components/OrderCard";
+ 8: import { BowlScanner } from "@/features/kasir/components/BowlScanner";
+ 9: import { Badge } from "@/components/ui/badge";
+10: import { Separator } from "@/components/ui/separator";
+11: import { OrderStatus, PaymentStatus } from "@/generated/prisma/enums";
+12: interface KasirDashboardProps {
+13:   initialOrders: KasirOrder[];
+14: }
+15: type FilterStatus = "all" | OrderStatus;
+16: export function KasirDashboard({ initialOrders }: KasirDashboardProps) {
+17:   const { orders, updatePrice, confirmCash } = useKasirRealtime(initialOrders);
+18:   const [filter, setFilter] = useState<FilterStatus>("all");
+19:   const handlePriceSubmit = async (orderId: string, price: number) => {
+20:     await updatePrice(orderId, price);
+21:   };
+22:   const handleCashConfirm = async (orderId: string) => {
+23:     await confirmCash(orderId);
+24:   };
+25:   const handleBowlFound = (_bowlId: string, order: { id: string } | null) => {
+26:     if (!order) return;
+27:     const el = document.getElementById(`order-${order.id}`);
+28:     el?.scrollIntoView({ behavior: "smooth", block: "center" });
+29:   };
+30:   const filters: { label: string; value: FilterStatus }[] = [
+31:     { label: "Semua", value: "all" },
+32:     { label: "Menunggu", value: OrderStatus.waiting },
+33:     { label: "Dikonfirmasi", value: OrderStatus.confirmed },
+34:     { label: "Dimasak", value: OrderStatus.preparing },
+35:     { label: "Disajikan", value: OrderStatus.served },
+36:     { label: "Selesai", value: OrderStatus.completed },
+37:   ];
+38:   const filteredOrders =
+39:     filter === "all" ? orders : orders.filter((o) => o.status === filter);
+40:   const pendingCount = orders.filter(
+41:     (o) => o.totalPrice && o.paymentStatus === PaymentStatus.pending,
+42:   ).length;
+43:   return (
+44:     <div className="max-w-2xl mx-auto p-4 space-y-4">
+45:       <div className="flex items-center justify-between">
+46:         <h1 className="text-xl font-bold">Dashboard Kasir</h1>
+47:         {pendingCount > 0 && (
+48:           <Badge variant="destructive">{pendingCount} belum bayar</Badge>
+49:         )}
+50:       </div>
+51:       <BowlScanner onBowlFound={handleBowlFound} />
+52:       <Separator />
+53:       <div className="flex gap-2 flex-wrap">
+54:         {filters.map((f) => (
+55:           <button
+56:             key={f.value}
+57:             onClick={() => setFilter(f.value)}
+58:             className={`px-3 py-1 rounded-full text-sm border transition-colors ${
+59:               filter === f.value
+60:                 ? "bg-primary text-primary-foreground border-primary"
+61:                 : "border-input hover:bg-accent"
+62:             }`}
+63:           >
+64:             {f.label}
+65:           </button>
+66:         ))}
+67:       </div>
+68:       <div className="space-y-3">
+69:         {filteredOrders.length === 0 && (
+70:           <p className="text-center text-muted-foreground py-8 text-sm">
+71:             Tidak ada order
+72:           </p>
+73:         )}
+74:         {filteredOrders.map((order) => (
+75:           <div key={order.id} id={`order-${order.id}`}>
+76:             <OrderCard
+77:               order={order}
+78:               onPriceSubmit={handlePriceSubmit}
+79:               onCashConfirm={handleCashConfirm}
+80:             />
+81:           </div>
+82:         ))}
+83:       </div>
+84:     </div>
+85:   );
+86: }
+</file>
+
+<file path="src/features/kasir/components/OrderCard.tsx">
+  1: "use client";
+  2: import { useState } from "react";
+  3: import { Card, CardContent, CardHeader } from "@/components/ui/card";
+  4: import { Badge } from "@/components/ui/badge";
+  5: import { Button } from "@/components/ui/button";
+  6: import { Input } from "@/components/ui/input";
+  7: import { Separator } from "@/components/ui/separator";
+  8: import type { KasirOrder } from "@/features/kasir/hooks/useKasirRealtime";
+  9: import { OrderStatus, PaymentStatus } from "@/generated/prisma/enums";
+ 10: const statusLabel: Record<OrderStatus, string> = {
+ 11:   [OrderStatus.waiting]: "Menunggu",
+ 12:   [OrderStatus.confirmed]: "Dikonfirmasi",
+ 13:   [OrderStatus.preparing]: "Dimasak",
+ 14:   [OrderStatus.served]: "Disajikan",
+ 15:   [OrderStatus.completed]: "Selesai",
+ 16: };
+ 17: const statusVariant: Record<OrderStatus, "secondary" | "default" | "outline"> =
+ 18:   {
+ 19:     [OrderStatus.waiting]: "secondary",
+ 20:     [OrderStatus.confirmed]: "default",
+ 21:     [OrderStatus.preparing]: "default",
+ 22:     [OrderStatus.served]: "default",
+ 23:     [OrderStatus.completed]: "outline",
+ 24:   };
+ 25: interface OrderCardProps {
+ 26:   order: KasirOrder;
+ 27:   onPriceSubmit: (orderId: string, price: number) => Promise<void>;
+ 28:   onCashConfirm: (orderId: string) => Promise<void>;
+ 29: }
+ 30: const formatRupiah = (amount: number) =>
+ 31:   new Intl.NumberFormat("id-ID", {
+ 32:     style: "currency",
+ 33:     currency: "IDR",
+ 34:     minimumFractionDigits: 0,
+ 35:   }).format(amount);
+ 36: export function OrderCard({
+ 37:   order,
+ 38:   onPriceSubmit,
+ 39:   onCashConfirm,
+ 40: }: OrderCardProps) {
+ 41:   const [price, setPrice] = useState("");
+ 42:   const [isLoading, setIsLoading] = useState(false);
+ 43:   const handlePriceSubmit = async () => {
+ 44:     const parsed = parseInt(price.replace(/\D/g, ""));
+ 45:     if (!parsed || parsed < 1000) return;
+ 46:     setIsLoading(true);
+ 47:     await onPriceSubmit(order.id, parsed);
+ 48:     setIsLoading(false);
+ 49:   };
+ 50:   const handleCashConfirm = async () => {
+ 51:     setIsLoading(true);
+ 52:     await onCashConfirm(order.id);
+ 53:     setIsLoading(false);
+ 54:   };
+ 55:   return (
+ 56:     <Card
+ 57:       className={order.paymentStatus === PaymentStatus.paid ? "opacity-60" : ""}
+ 58:     >
+ 59:       <CardHeader className="pb-2">
+ 60:         <div className="flex items-center justify-between">
+ 61:           <div>
+ 62:             <p className="font-semibold text-lg">{order.customerName}</p>
+ 63:             <p className="text-xs text-muted-foreground">{order.bowlId}</p>
+ 64:           </div>
+ 65:           <div className="flex flex-col items-end gap-1">
+ 66:             <Badge variant={statusVariant[order.status]}>
+ 67:               {statusLabel[order.status]}
+ 68:             </Badge>
+ 69:             {order.paymentStatus === PaymentStatus.paid && (
+ 70:               <Badge
+ 71:                 variant="outline"
+ 72:                 className="text-green-600 border-green-600"
+ 73:               >
+ 74:                 LUNAS ✓
+ 75:               </Badge>
+ 76:             )}
+ 77:           </div>
+ 78:         </div>
+ 79:       </CardHeader>
+ 80:       <CardContent className="space-y-3">
+ 81:         {}
+ 82:         <div className="flex flex-wrap gap-1">
+ 83:           <Badge variant="outline" className="capitalize text-xs">
+ 84:             {order.preferences.broth}
+ 85:           </Badge>
+ 86:           <Badge variant="outline" className="text-xs">
+ 87:             Pedas {order.preferences.spicy_level}
+ 88:           </Badge>
+ 89:           <Badge variant="outline" className="capitalize text-xs">
+ 90:             {order.preferences.taste}
+ 91:           </Badge>
+ 92:         </div>
+ 93:         {order.preferences.extra_notes && (
+ 94:           <p className="text-xs text-muted-foreground italic">
+ 95:             &quot;{order.preferences.extra_notes}&quot;
+ 96:           </p>
+ 97:         )}
+ 98:         <Separator />
+ 99:         {}
+100:         {!order.totalPrice && (
+101:           <div className="flex gap-2">
+102:             <Input
+103:               placeholder="Total harga (Rp)"
+104:               value={price}
+105:               onChange={(e) => setPrice(e.target.value)}
+106:               type="number"
+107:               min={0}
+108:             />
+109:             <Button
+110:               onClick={handlePriceSubmit}
+111:               disabled={isLoading || !price}
+112:               size="sm"
+113:             >
+114:               Kirim
+115:             </Button>
+116:           </div>
+117:         )}
+118:         {}
+119:         {order.totalPrice && (
+120:           <div className="space-y-2">
+121:             <div className="flex items-center justify-between">
+122:               <span className="text-sm text-muted-foreground">Total</span>
+123:               <span className="font-bold">
+124:                 {formatRupiah(order.totalPrice)}
+125:               </span>
+126:             </div>
+127:             {}
+128:             {order.paymentStatus === PaymentStatus.pending && (
+129:               <Button
+130:                 variant="outline"
+131:                 size="sm"
+132:                 className="w-full"
+133:                 onClick={handleCashConfirm}
+134:                 disabled={isLoading}
+135:               >
+136:                 Konfirmasi Cash
+137:               </Button>
+138:             )}
+139:             {}
+140:             {order.paymentStatus === PaymentStatus.paid && (
+141:               <p className="text-xs text-center text-muted-foreground">
+142:                 Dibayar via {order.paymentMethod?.toUpperCase()}
+143:               </p>
+144:             )}
+145:           </div>
+146:         )}
+147:       </CardContent>
+148:     </Card>
+149:   );
+150: }
+</file>
+
+<file path="src/features/kasir/hooks/useKasirRealtime.ts">
+  1: "use client";
+  2: import { useEffect, useState } from "react";
+  3: import { supabase } from "@/lib/supabase";
+  4: import type { Preferences } from "@/features/order/schemas/order.schema";
+  5: import { trpc } from "@/lib/trpc/client";
+  6: import type { OrderView } from "@/lib/types/order.types";
+  7: import {
+  8:   OrderStatus,
+  9:   PaymentStatus,
+ 10:   PaymentMethod,
+ 11: } from "@/generated/prisma/enums";
+ 12: export type KasirOrder = OrderView;
+ 13: export function useKasirRealtime(initialOrders: KasirOrder[]) {
+ 14:   const [orders, setOrders] = useState<KasirOrder[]>(initialOrders);
+ 15:   const updatePriceMutation = trpc.orders.updatePrice.useMutation();
+ 16:   const confirmCashMutation = trpc.payments.confirmCash.useMutation();
+ 17:   const updatePrice = async (orderId: string, price: number) => {
+ 18:     const data = await updatePriceMutation.mutateAsync({
+ 19:       orderId,
+ 20:       totalPrice: price,
+ 21:     });
+ 22:     setOrders((prev) =>
+ 23:       prev.map((o) =>
+ 24:         o.id === data.order.id
+ 25:           ? {
+ 26:               ...o,
+ 27:               totalPrice: data.order.totalPrice,
+ 28:               status: data.order.status,
+ 29:             }
+ 30:           : o,
+ 31:       ),
+ 32:     );
+ 33:     return data;
+ 34:   };
+ 35:   const confirmCash = async (orderId: string) => {
+ 36:     const data = await confirmCashMutation.mutateAsync({ orderId });
+ 37:     setOrders((prev) =>
+ 38:       prev.map((o) =>
+ 39:         o.id === orderId
+ 40:           ? {
+ 41:               ...o,
+ 42:               paymentStatus: PaymentStatus.paid,
+ 43:               paymentMethod: PaymentMethod.cash,
+ 44:               status: OrderStatus.completed,
+ 45:             }
+ 46:           : o,
+ 47:       ),
+ 48:     );
+ 49:     return data;
+ 50:   };
+ 51:   useEffect(() => {
+ 52:     const channel = supabase
+ 53:       .channel("kasir-orders")
+ 54:       .on(
+ 55:         "postgres_changes",
+ 56:         {
+ 57:           event: "INSERT",
+ 58:           schema: "public",
+ 59:           table: "orders",
+ 60:         },
+ 61:         (payload) => {
+ 62:           const raw = payload.new as Record<string, unknown>;
+ 63:           const newOrder: KasirOrder = {
+ 64:             id: raw.id as string,
+ 65:             bowlId: raw.bowl_id as string,
+ 66:             customerName: raw.customer_name as string,
+ 67:             preferences: raw.preferences as Preferences,
+ 68:             totalPrice: raw.total_price as number | null,
+ 69:             paymentStatus: raw.payment_status as PaymentStatus,
+ 70:             paymentMethod: raw.payment_method as PaymentMethod | null,
+ 71:             status: raw.status as OrderStatus,
+ 72:             createdAt: raw.created_at as string,
+ 73:           };
+ 74:           setOrders((prev) => [newOrder, ...prev]);
+ 75:         },
+ 76:       )
+ 77:       .on(
+ 78:         "postgres_changes",
+ 79:         {
+ 80:           event: "UPDATE",
+ 81:           schema: "public",
+ 82:           table: "orders",
+ 83:         },
+ 84:         (payload) => {
+ 85:           const raw = payload.new as Record<string, unknown>;
+ 86:           setOrders((prev) =>
+ 87:             prev.map((o) =>
+ 88:               o.id === raw.id
+ 89:                 ? {
+ 90:                     ...o,
+ 91:                     totalPrice: raw.total_price as number | null,
+ 92:                     paymentStatus: raw.payment_status as PaymentStatus,
+ 93:                     paymentMethod: raw.payment_method as PaymentMethod | null,
+ 94:                     status: raw.status as OrderStatus,
+ 95:                   }
+ 96:                 : o,
+ 97:             ),
+ 98:           );
+ 99:         },
+100:       )
+101:       .subscribe();
+102:     return () => {
+103:       supabase.removeChannel(channel);
+104:     };
+105:   }, []);
+106:   return { orders, setOrders, updatePrice, confirmCash };
+107: }
+</file>
+
+<file path="src/features/kasir/schemas/kasir.schema.ts">
+1: import { z } from "zod";
+2: export const inputHargaSchema = z.object({
+3:   total_price: z
+4:     .number({ error: "Harga harus berupa angka" })
+5:     .min(1000, "Harga minimal Rp 1.000")
+6:     .max(10000000, "Harga terlalu besar"),
+7: });
+8: export type InputHargaInput = z.infer<typeof inputHargaSchema>;
+</file>
+
+<file path="src/features/order/components/OrderTracking.tsx">
+  1: "use client";
+  2: import { useOrderRealtime } from "@/features/order/hooks/useOrderRealtime";
+  3: import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+  4: import { Badge } from "@/components/ui/badge";
+  5: import { Button } from "@/components/ui/button";
+  6: import { Separator } from "@/components/ui/separator";
+  7: import { OrderStatus, PaymentStatus } from "@/generated/prisma/enums";
+  8: import { Preferences } from "../schemas/order.schema";
+  9: const statusLabel: Record<OrderStatus, string> = {
+ 10:   [OrderStatus.waiting]: "Menunggu kasir",
+ 11:   [OrderStatus.confirmed]: "Sedang diproses",
+ 12:   [OrderStatus.preparing]: "Sedang dimasak 🍳",
+ 13:   [OrderStatus.served]: "Siap disajikan ✓",
+ 14:   [OrderStatus.completed]: "Selesai ✓",
+ 15: };
+ 16: const statusColor: Record<OrderStatus, string> = {
+ 17:   [OrderStatus.waiting]: "secondary",
+ 18:   [OrderStatus.confirmed]: "default",
+ 19:   [OrderStatus.preparing]: "default",
+ 20:   [OrderStatus.served]: "default",
+ 21:   [OrderStatus.completed]: "default",
+ 22: };
+ 23: interface Order {
+ 24:   id: string;
+ 25:   customerName: string;
+ 26:   preferences: Preferences;
+ 27:   totalPrice: number | null;
+ 28:   paymentStatus: PaymentStatus;
+ 29:   status: OrderStatus;
+ 30: }
+ 31: interface OrderTrackingProps {
+ 32:   initialOrder: Order;
+ 33: }
+ 34: export function OrderTracking({ initialOrder }: OrderTrackingProps) {
+ 35:   const order = useOrderRealtime(initialOrder.id, initialOrder);
+ 36:   const formatRupiah = (amount: number) =>
+ 37:     new Intl.NumberFormat("id-ID", {
+ 38:       style: "currency",
+ 39:       currency: "IDR",
+ 40:       minimumFractionDigits: 0,
+ 41:     }).format(amount);
+ 42:   return (
+ 43:     <Card className="w-full max-w-md mx-auto">
+ 44:       <CardHeader>
+ 45:         <CardTitle className="text-center text-xl">🍜 Pesanan Kamu</CardTitle>
+ 46:         <p className="text-center font-semibold">{order.customerName}</p>
+ 47:         <div className="flex justify-center">
+ 48:           <Badge variant={statusColor[order.status] as "default" | "secondary"}>
+ 49:             {statusLabel[order.status] ?? order.status}
+ 50:           </Badge>
+ 51:         </div>
+ 52:       </CardHeader>
+ 53:       <CardContent className="space-y-4">
+ 54:         {}
+ 55:         <div className="space-y-1 text-sm">
+ 56:           <p className="font-medium text-muted-foreground">Preferensi rasa</p>
+ 57:           <div className="flex flex-wrap gap-2">
+ 58:             <Badge variant="outline" className="capitalize">
+ 59:               {order.preferences.broth}
+ 60:             </Badge>
+ 61:             <Badge variant="outline">
+ 62:               Pedas level {order.preferences.spicy_level}
+ 63:             </Badge>
+ 64:             <Badge variant="outline" className="capitalize">
+ 65:               {order.preferences.taste}
+ 66:             </Badge>
+ 67:           </div>
+ 68:           {order.preferences.extra_notes && (
+ 69:             <p className="text-muted-foreground italic">
+ 70:               &quot;{order.preferences.extra_notes}&quot;
+ 71:             </p>
+ 72:           )}
+ 73:         </div>
+ 74:         <Separator />
+ 75:         {}
+ 76:         {!order.totalPrice && (
+ 77:           <div className="text-center space-y-2 py-4">
+ 78:             <div className="animate-pulse text-3xl">⏳</div>
+ 79:             <p className="text-sm text-muted-foreground">
+ 80:               Menunggu kasir memproses pesananmu...
+ 81:             </p>
+ 82:           </div>
+ 83:         )}
+ 84:         {}
+ 85:         {order.totalPrice && order.paymentStatus === PaymentStatus.pending && (
+ 86:           <div className="space-y-4">
+ 87:             <div className="text-center">
+ 88:               <p className="text-sm text-muted-foreground">Total pembayaran</p>
+ 89:               <p className="text-3xl font-bold text-primary">
+ 90:                 {formatRupiah(order.totalPrice)}
+ 91:               </p>
+ 92:             </div>
+ 93:             <Button className="w-full" size="lg">
+ 94:               Bayar dengan QRIS
+ 95:             </Button>
+ 96:             <p className="text-center text-sm text-muted-foreground">
+ 97:               atau bayar cash langsung ke kasir
+ 98:             </p>
+ 99:           </div>
+100:         )}
+101:         {}
+102:         {order.paymentStatus === PaymentStatus.paid && (
+103:           <div className="text-center space-y-2 py-4">
+104:             <p className="text-4xl">✅</p>
+105:             <p className="font-semibold">Pembayaran berhasil!</p>
+106:             <p className="text-sm text-muted-foreground">
+107:               Selamat menikmati seblakmu 🎉
+108:             </p>
+109:           </div>
+110:         )}
+111:       </CardContent>
+112:     </Card>
+113:   );
+114: }
+</file>
+
+<file path="src/features/order/hooks/useOrderRealtime.ts">
+ 1: "use client";
+ 2: import { useEffect, useState } from "react";
+ 3: import { supabase } from "@/lib/supabase";
+ 4: import type { OrderStatus, PaymentStatus } from "@/generated/prisma/enums";
+ 5: import { Preferences } from "../schemas/order.schema";
+ 6: interface Order {
+ 7:   id: string;
+ 8:   customerName: string;
+ 9:   preferences: Preferences;
+10:   totalPrice: number | null;
+11:   paymentStatus: PaymentStatus;
+12:   status: OrderStatus;
+13: }
+14: export function useOrderRealtime(orderId: string, initialOrder: Order) {
+15:   const [order, setOrder] = useState<Order>(initialOrder);
+16:   useEffect(() => {
+17:     const channel = supabase
+18:       .channel(`order-${orderId}`)
+19:       .on(
+20:         "postgres_changes",
+21:         {
+22:           event: "UPDATE",
+23:           schema: "public",
+24:           table: "orders",
+25:           filter: `id=eq.${orderId}`,
+26:         },
+27:         (payload) => {
+28:           const raw = payload.new as Record<string, unknown>;
+29:           setOrder({
+30:             id: raw.id as string,
+31:             customerName: raw.customer_name as string,
+32:             preferences: raw.preferences as Preferences,
+33:             totalPrice: raw.total_price as number | null,
+34:             paymentStatus: raw.payment_status as PaymentStatus,
+35:             status: raw.status as OrderStatus,
+36:           });
+37:         },
+38:       )
+39:       .subscribe();
+40:     return () => {
+41:       supabase.removeChannel(channel);
+42:     };
+43:   }, [orderId]);
+44:   return order;
+45: }
+</file>
+
+<file path="src/lib/supabase.ts">
+1: import { createClient } from "@supabase/supabase-js";
+2: export const supabase = createClient(
+3:   process.env.NEXT_PUBLIC_SUPABASE_URL!,
+4:   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+5: );
+</file>
+
+<file path="src/lib/types/order.types.ts">
+ 1: import type {
+ 2:   OrderStatus,
+ 3:   PaymentStatus,
+ 4:   PaymentMethod,
+ 5: } from "@/generated/prisma/enums";
+ 6: import type { Preferences } from "@/features/order/schemas/order.schema";
+ 7: export type { OrderStatus, PaymentStatus, PaymentMethod };
+ 8: export interface OrderView {
+ 9:   id: string;
+10:   bowlId: string;
+11:   customerName: string;
+12:   preferences: Preferences;
+13:   totalPrice: number | null;
+14:   paymentStatus: PaymentStatus;
+15:   paymentMethod: PaymentMethod | null;
+16:   status: OrderStatus;
+17:   createdAt: string;
+18: }
+</file>
+
+<file path="src/server/routers/payments.ts">
+ 1: import { z } from "zod";
+ 2: import { router, publicProcedure } from "../trpc";
+ 3: import {
+ 4:   OrderStatus,
+ 5:   PaymentStatus,
+ 6:   PaymentMethod,
+ 7: } from "@/generated/prisma/enums";
+ 8: export const paymentsRouter = router({
+ 9:   confirmCash: publicProcedure
+10:     .input(z.object({ orderId: z.string() }))
+11:     .mutation(async ({ input, ctx }) => {
+12:       const order = await ctx.prisma.order.findUnique({
+13:         where: { id: input.orderId },
+14:       });
+15:       if (!order) {
+16:         throw new Error("Order tidak ditemukan");
+17:       }
+18:       if (!order.totalPrice) {
+19:         throw new Error("Harga belum diinput kasir");
+20:       }
+21:       if (order.paymentStatus === PaymentStatus.paid) {
+22:         throw new Error("Order sudah dibayar");
+23:       }
+24:       const [payment] = await ctx.prisma.$transaction([
+25:         ctx.prisma.payment.create({
+26:           data: {
+27:             orderId: input.orderId,
+28:             amount: order.totalPrice,
+29:             paymentMethod: PaymentMethod.cash,
+30:           },
+31:         }),
+32:         ctx.prisma.order.update({
+33:           where: { id: input.orderId },
+34:           data: {
+35:             paymentStatus: PaymentStatus.paid,
+36:             paymentMethod: PaymentMethod.cash,
+37:             status: OrderStatus.completed,
+38:           },
+39:         }),
+40:       ]);
+41:       return { payment };
+42:     }),
+43: });
+</file>
+
+<file path="eslint.config.mjs">
+ 1: import { defineConfig, globalIgnores } from "eslint/config";
+ 2: import nextVitals from "eslint-config-next/core-web-vitals";
+ 3: import nextTs from "eslint-config-next/typescript";
+ 4: 
+ 5: const eslintConfig = defineConfig([
+ 6:   ...nextVitals,
+ 7:   ...nextTs,
+ 8:   // Override default ignores of eslint-config-next.
+ 9:   globalIgnores([
+10:     // Default ignores of eslint-config-next:
+11:     ".next/**",
+12:     "out/**",
+13:     "build/**",
+14:     "next-env.d.ts",
+15:   ]),
+16: ]);
+17: 
+18: export default eslintConfig;
+</file>
+
+<file path="next.config.ts">
+1: import type { NextConfig } from "next";
+2: const nextConfig: NextConfig = {
+3:   reactCompiler: true,
+4: };
+5: export default nextConfig;
+</file>
+
+<file path="prisma.config.ts">
+ 1: import "dotenv/config";
+ 2: import { defineConfig, env } from "prisma/config";
+ 3: export default defineConfig({
+ 4:   schema: "prisma/schema.prisma",
+ 5:   migrations: {
+ 6:     path: "prisma/migrations",
+ 7:     seed: "tsx prisma/seed.ts",
+ 8:   },
+ 9:   datasource: {
+10:     url: env("DIRECT_URL"),
+11:   },
+12: });
+</file>
+
+<file path="prisma/migrations/20260217145618_init_db/migration.sql">
+ 1: CREATE TABLE "bowls" (
+ 2:     "id" TEXT NOT NULL,
+ 3:     "is_active" BOOLEAN NOT NULL DEFAULT false,
+ 4:     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+ 5:     CONSTRAINT "bowls_pkey" PRIMARY KEY ("id")
+ 6: );
+ 7: CREATE TABLE "orders" (
+ 8:     "id" TEXT NOT NULL,
+ 9:     "bowl_id" TEXT NOT NULL,
+10:     "customer_name" TEXT NOT NULL,
+11:     "preferences" JSONB NOT NULL DEFAULT '{}',
+12:     "total_price" INTEGER,
+13:     "payment_method" TEXT,
+14:     "payment_status" TEXT NOT NULL DEFAULT 'pending',
+15:     "status" TEXT NOT NULL DEFAULT 'waiting',
+16:     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+17:     "updated_at" TIMESTAMP(3) NOT NULL,
+18:     CONSTRAINT "orders_pkey" PRIMARY KEY ("id")
+19: );
+20: CREATE TABLE "payments" (
+21:     "id" TEXT NOT NULL,
+22:     "order_id" TEXT NOT NULL,
+23:     "amount" INTEGER NOT NULL,
+24:     "payment_method" TEXT NOT NULL,
+25:     "midtrans_order_id" TEXT,
+26:     "midtrans_status" TEXT,
+27:     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+28:     CONSTRAINT "payments_pkey" PRIMARY KEY ("id")
+29: );
+30: CREATE UNIQUE INDEX "payments_midtrans_order_id_key" ON "payments"("midtrans_order_id");
+31: ALTER TABLE "orders" ADD CONSTRAINT "orders_bowl_id_fkey" FOREIGN KEY ("bowl_id") REFERENCES "bowls"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+32: ALTER TABLE "payments" ADD CONSTRAINT "payments_order_id_fkey" FOREIGN KEY ("order_id") REFERENCES "orders"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+</file>
+
+<file path="prisma/migrations/migration_lock.toml">
+1: # Please do not edit this file manually
+2: # It should be added in your version-control system (e.g., Git)
+3: provider = "postgresql"
+</file>
+
+<file path="prisma/schema.prisma">
+ 1: // This is your Prisma schema file,
+ 2: // learn more about it in the docs: https://pris.ly/d/prisma-schema
+ 3: 
+ 4: // Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+ 5: // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+ 6: 
+ 7: generator client {
+ 8:   provider = "prisma-client"
+ 9:   output   = "../src/generated/prisma"
+10: }
+11: 
+12: datasource db {
+13:   provider = "postgresql"
+14: }
+15: 
+16: enum OrderStatus {
+17:   waiting
+18:   confirmed
+19:   preparing
+20:   served
+21:   completed
+22: }
+23: 
+24: enum PaymentStatus {
+25:   pending
+26:   paid
+27: }
+28: 
+29: enum PaymentMethod {
+30:   cash
+31:   qris
+32: }
+33: 
+34: enum MidtransStatus {
+35:   pending
+36:   settlement
+37:   expire
+38:   cancel
+39:   deny
+40:   failure
+41: }
+42: 
+43: model Bowl {
+44:   id        String   @id
+45:   isActive  Boolean  @default(false) @map("is_active")
+46:   createdAt DateTime @default(now()) @map("created_at")
+47:   orders    Order[]
+48: 
+49:   @@map("bowls")
+50: }
+51: 
+52: model Order {
+53:   id            String         @id @default(uuid())
+54:   bowlId        String         @map("bowl_id")
+55:   customerName  String         @map("customer_name")
+56:   preferences   Json           @default("{}")
+57:   totalPrice    Int?           @map("total_price")
+58:   paymentMethod PaymentMethod? @map("payment_method")
+59:   paymentStatus PaymentStatus  @default(pending) @map("payment_status")
+60:   status        OrderStatus    @default(waiting)
+61:   createdAt     DateTime       @default(now()) @map("created_at")
+62:   updatedAt     DateTime       @updatedAt @map("updated_at")
+63:   bowl          Bowl           @relation(fields: [bowlId], references: [id])
+64:   payments      Payment[]
+65: 
+66:   @@map("orders")
+67: }
+68: 
+69: model Payment {
+70:   id              String          @id @default(uuid())
+71:   orderId         String          @map("order_id")
+72:   amount          Int
+73:   paymentMethod   PaymentMethod   @map("payment_method")
+74:   midtransOrderId String?         @unique @map("midtrans_order_id")
+75:   midtransStatus  MidtransStatus? @map("midtrans_status")
+76:   createdAt       DateTime        @default(now()) @map("created_at")
+77:   order           Order           @relation(fields: [orderId], references: [id])
+78: 
+79:   @@map("payments")
+80: }
+</file>
+
+<file path="prisma/seed.ts">
+ 1: import { PrismaClient } from "@/generated/prisma/client";
+ 2: import { PrismaPg } from "@prisma/adapter-pg";
+ 3: import { env } from "prisma/config";
+ 4: const adapter = new PrismaPg({
+ 5:   connectionString: env("DATABASE_URL"),
+ 6: });
+ 7: const prisma = new PrismaClient({ adapter });
+ 8: async function main() {
+ 9:   const bowls = ["bowl-A1", "bowl-A2", "bowl-A3", "bowl-A4", "bowl-A5"];
+10:   for (const id of bowls) {
+11:     await prisma.bowl.upsert({
+12:       where: { id },
+13:       update: {},
+14:       create: { id, isActive: false },
+15:     });
+16:   }
+17:   console.log("✅ Seed berhasil — 5 bowl tersedia");
+18: }
+19: main()
+20:   .catch(console.error)
+21:   .finally(() => prisma.$disconnect());
+</file>
+
+<file path="public/file.svg">
+1: <svg fill="none" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M14.5 13.5V5.41a1 1 0 0 0-.3-.7L9.8.29A1 1 0 0 0 9.08 0H1.5v13.5A2.5 2.5 0 0 0 4 16h8a2.5 2.5 0 0 0 2.5-2.5m-1.5 0v-7H8v-5H3v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1M9.5 5V2.12L12.38 5zM5.13 5h-.62v1.25h2.12V5zm-.62 3h7.12v1.25H4.5zm.62 3h-.62v1.25h7.12V11z" clip-rule="evenodd" fill="#666" fill-rule="evenodd"/></svg>
+</file>
+
+<file path="public/globe.svg">
+1: <svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><g clip-path="url(#a)"><path fill-rule="evenodd" clip-rule="evenodd" d="M10.27 14.1a6.5 6.5 0 0 0 3.67-3.45q-1.24.21-2.7.34-.31 1.83-.97 3.1M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m.48-1.52a7 7 0 0 1-.96 0H7.5a4 4 0 0 1-.84-1.32q-.38-.89-.63-2.08a40 40 0 0 0 3.92 0q-.25 1.2-.63 2.08a4 4 0 0 1-.84 1.31zm2.94-4.76q1.66-.15 2.95-.43a7 7 0 0 0 0-2.58q-1.3-.27-2.95-.43a18 18 0 0 1 0 3.44m-1.27-3.54a17 17 0 0 1 0 3.64 39 39 0 0 1-4.3 0 17 17 0 0 1 0-3.64 39 39 0 0 1 4.3 0m1.1-1.17q1.45.13 2.69.34a6.5 6.5 0 0 0-3.67-3.44q.65 1.26.98 3.1M8.48 1.5l.01.02q.41.37.84 1.31.38.89.63 2.08a40 40 0 0 0-3.92 0q.25-1.2.63-2.08a4 4 0 0 1 .85-1.32 7 7 0 0 1 .96 0m-2.75.4a6.5 6.5 0 0 0-3.67 3.44 29 29 0 0 1 2.7-.34q.31-1.83.97-3.1M4.58 6.28q-1.66.16-2.95.43a7 7 0 0 0 0 2.58q1.3.27 2.95.43a18 18 0 0 1 0-3.44m.17 4.71q-1.45-.12-2.69-.34a6.5 6.5 0 0 0 3.67 3.44q-.65-1.27-.98-3.1" fill="#666"/></g><defs><clipPath id="a"><path fill="#fff" d="M0 0h16v16H0z"/></clipPath></defs></svg>
+</file>
+
+<file path="public/next.svg">
+1: <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 394 80"><path fill="#000" d="M262 0h68.5v12.7h-27.2v66.6h-13.6V12.7H262V0ZM149 0v12.7H94v20.4h44.3v12.6H94v21h55v12.6H80.5V0h68.7zm34.3 0h-17.8l63.8 79.4h17.9l-32-39.7 32-39.6h-17.9l-23 28.6-23-28.6zm18.3 56.7-9-11-27.1 33.7h17.8l18.3-22.7z"/><path fill="#000" d="M81 79.3 17 0H0v79.3h13.6V17l50.2 62.3H81Zm252.6-.4c-1 0-1.8-.4-2.5-1s-1.1-1.6-1.1-2.6.3-1.8 1-2.5 1.6-1 2.6-1 1.8.3 2.5 1a3.4 3.4 0 0 1 .6 4.3 3.7 3.7 0 0 1-3 1.8zm23.2-33.5h6v23.3c0 2.1-.4 4-1.3 5.5a9.1 9.1 0 0 1-3.8 3.5c-1.6.8-3.5 1.3-5.7 1.3-2 0-3.7-.4-5.3-1s-2.8-1.8-3.7-3.2c-.9-1.3-1.4-3-1.4-5h6c.1.8.3 1.6.7 2.2s1 1.2 1.6 1.5c.7.4 1.5.5 2.4.5 1 0 1.8-.2 2.4-.6a4 4 0 0 0 1.6-1.8c.3-.8.5-1.8.5-3V45.5zm30.9 9.1a4.4 4.4 0 0 0-2-3.3 7.5 7.5 0 0 0-4.3-1.1c-1.3 0-2.4.2-3.3.5-.9.4-1.6 1-2 1.6a3.5 3.5 0 0 0-.3 4c.3.5.7.9 1.3 1.2l1.8 1 2 .5 3.2.8c1.3.3 2.5.7 3.7 1.2a13 13 0 0 1 3.2 1.8 8.1 8.1 0 0 1 3 6.5c0 2-.5 3.7-1.5 5.1a10 10 0 0 1-4.4 3.5c-1.8.8-4.1 1.2-6.8 1.2-2.6 0-4.9-.4-6.8-1.2-2-.8-3.4-2-4.5-3.5a10 10 0 0 1-1.7-5.6h6a5 5 0 0 0 3.5 4.6c1 .4 2.2.6 3.4.6 1.3 0 2.5-.2 3.5-.6 1-.4 1.8-1 2.4-1.7a4 4 0 0 0 .8-2.4c0-.9-.2-1.6-.7-2.2a11 11 0 0 0-2.1-1.4l-3.2-1-3.8-1c-2.8-.7-5-1.7-6.6-3.2a7.2 7.2 0 0 1-2.4-5.7 8 8 0 0 1 1.7-5 10 10 0 0 1 4.3-3.5c2-.8 4-1.2 6.4-1.2 2.3 0 4.4.4 6.2 1.2 1.8.8 3.2 2 4.3 3.4 1 1.4 1.5 3 1.5 5h-5.8z"/></svg>
+</file>
+
+<file path="public/vercel.svg">
+1: <svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1155 1000"><path d="m577.3 0 577.4 1000H0z" fill="#fff"/></svg>
+</file>
+
+<file path="public/window.svg">
+1: <svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path fill-rule="evenodd" clip-rule="evenodd" d="M1.5 2.5h13v10a1 1 0 0 1-1 1h-11a1 1 0 0 1-1-1zM0 1h16v11.5a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 0 12.5zm3.75 4.5a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5M7 4.75a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0m1.75.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5" fill="#666"/></svg>
+</file>
+
+<file path="README.md">
+ 1: This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+ 2: 
+ 3: ## Getting Started
+ 4: 
+ 5: First, run the development server:
+ 6: 
+ 7: ```bash
+ 8: npm run dev
+ 9: # or
+10: yarn dev
+11: # or
+12: pnpm dev
+13: # or
+14: bun dev
+15: ```
+16: 
+17: Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+18: 
+19: You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+20: 
+21: This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+22: 
+23: ## Learn More
+24: 
+25: To learn more about Next.js, take a look at the following resources:
+26: 
+27: - [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+28: - [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+29: 
+30: You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+31: 
+32: ## Deploy on Vercel
+33: 
+34: The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+35: 
+36: Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+</file>
+
+<file path="src/app/api/bowls/[bowlId]/route.ts">
+ 1: import prisma from "@/lib/prisma";
+ 2: import { NextResponse, NextRequest } from "next/server";
+ 3: export async function GET(
+ 4:   _req: NextRequest,
+ 5:   { params }: { params: Promise<{ bowlId: string }> },
+ 6: ) {
+ 7:   const { bowlId } = await params;
+ 8:   const bowl = await prisma.bowl.findUnique({
+ 9:     where: { id: bowlId },
+10:   });
+11:   if (!bowl) {
+12:     return NextResponse.json(
+13:       { error: "Wadah tidak ditemukan" },
+14:       { status: 404 },
+15:     );
+16:   }
+17:   return NextResponse.json(bowl);
+18: }
+</file>
+
+<file path="src/app/api/trpc/[trpc]/route.ts">
+ 1: import { fetchRequestHandler } from "@trpc/server/adapters/fetch";
+ 2: import { appRouter } from "@/server/routers/_app";
+ 3: import { createContext } from "@/server/context";
+ 4: const handler = (req: Request) => {
+ 5:   return fetchRequestHandler({
+ 6:     endpoint: "/api/trpc",
+ 7:     req,
+ 8:     router: appRouter,
+ 9:     createContext,
+10:   });
+11: };
+12: export { handler as GET, handler as POST };
+</file>
+
+<file path="src/app/order/track/[orderId]/page.tsx">
+ 1: import prisma from "@/lib/prisma";
+ 2: import { OrderTracking } from "@/features/order/components/OrderTracking";
+ 3: import { Card, CardContent } from "@/components/ui/card";
+ 4: import { Preferences } from "@/features/order/schemas/order.schema";
+ 5: interface Props {
+ 6:   params: Promise<{ orderId: string }>;
+ 7: }
+ 8: export default async function TrackOrderPage({ params }: Props) {
+ 9:   const { orderId } = await params;
+10:   const order = await prisma.order.findUnique({
+11:     where: { id: orderId },
+12:   });
+13:   if (!order) {
+14:     return (
+15:       <main className="min-h-screen flex items-center justify-center p-4">
+16:         <Card className="w-full max-w-md">
+17:           <CardContent className="pt-6 text-center space-y-2">
+18:             <p className="text-4xl">❓</p>
+19:             <p className="font-semibold">Pesanan tidak ditemukan</p>
+20:           </CardContent>
+21:         </Card>
+22:       </main>
+23:     );
+24:   }
+25:   const initialOrder = {
+26:     id: order.id,
+27:     customerName: order.customerName,
+28:     preferences: order.preferences as Preferences,
+29:     totalPrice: order.totalPrice,
+30:     paymentStatus: order.paymentStatus,
+31:     status: order.status,
+32:   };
+33:   return (
+34:     <main className="min-h-screen flex items-center justify-center p-4">
+35:       <OrderTracking initialOrder={initialOrder} />
+36:     </main>
+37:   );
+38: }
+</file>
+
+<file path="src/app/page.tsx">
+ 1: import Image from "next/image";
+ 2: export default function Home() {
+ 3:   return (
+ 4:     <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
+ 5:       <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
+ 6:         <Image
+ 7:           className="dark:invert"
+ 8:           src="/next.svg"
+ 9:           alt="Next.js logo"
+10:           width={100}
+11:           height={20}
+12:           priority
+13:         />
+14:         <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
+15:           <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
+16:             To get started, edit the page.tsx file.
+17:           </h1>
+18:           <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
+19:             Looking for a starting point or more instructions? Head over to{" "}
+20:             <a
+21:               href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
+22:               className="font-medium text-zinc-950 dark:text-zinc-50"
+23:             >
+24:               Templates
+25:             </a>{" "}
+26:             or the{" "}
+27:             <a
+28:               href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
+29:               className="font-medium text-zinc-950 dark:text-zinc-50"
+30:             >
+31:               Learning
+32:             </a>{" "}
+33:             center.
+34:           </p>
+35:         </div>
+36:         <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
+37:           <a
+38:             className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
+39:             href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
+40:             target="_blank"
+41:             rel="noopener noreferrer"
+42:           >
+43:             <Image
+44:               className="dark:invert"
+45:               src="/vercel.svg"
+46:               alt="Vercel logomark"
+47:               width={16}
+48:               height={16}
+49:             />
+50:             Deploy Now
+51:           </a>
+52:           <a
+53:             className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
+54:             href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
+55:             target="_blank"
+56:             rel="noopener noreferrer"
+57:           >
+58:             Documentation
+59:           </a>
+60:         </div>
+61:       </main>
+62:     </div>
+63:   );
+64: }
+</file>
+
+<file path="src/features/order/components/OrderForm.tsx">
+  1: "use client";
+  2: import { useState } from "react";
+  3: import { useRouter } from "next/navigation";
+  4: import { useForm, useWatch } from "react-hook-form";
+  5: import { zodResolver } from "@hookform/resolvers/zod";
+  6: import {
+  7:   createOrderSchema,
+  8:   CreateOrderInput,
+  9:   preferencesSchema,
+ 10: } from "@/features/order/schemas/order.schema";
+ 11: import { Button } from "@/components/ui/button";
+ 12: import { Input } from "@/components/ui/input";
+ 13: import { Label } from "@/components/ui/label";
+ 14: import { Textarea } from "@/components/ui/textarea";
+ 15: import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+ 16: import { trpc } from "@/lib/trpc/client";
+ 17: interface OrderFormProps {
+ 18:   bowlId: string;
+ 19: }
+ 20: export function OrderForm({ bowlId }: OrderFormProps) {
+ 21:   const router = useRouter();
+ 22:   const [error, setError] = useState<string | null>(null);
+ 23:   const createOrder = trpc.orders.create.useMutation({
+ 24:     onSuccess: (data) => {
+ 25:       router.push(`/order/track/${data.order.id}`);
+ 26:     },
+ 27:     onError: (error) => {
+ 28:       setError(error.message);
+ 29:     },
+ 30:   });
+ 31:   const {
+ 32:     register,
+ 33:     handleSubmit,
+ 34:     setValue,
+ 35:     control,
+ 36:     formState: { errors },
+ 37:   } = useForm<CreateOrderInput>({
+ 38:     resolver: zodResolver(createOrderSchema),
+ 39:     defaultValues: {
+ 40:       bowlId: bowlId,
+ 41:       preferences: {
+ 42:         broth: "kuah",
+ 43:         spicy_level: 3,
+ 44:         taste: "normal",
+ 45:       },
+ 46:     },
+ 47:   });
+ 48:   const tastes = Object.values(preferencesSchema.shape.taste.enum);
+ 49:   const spicyLevel = useWatch({ control, name: "preferences.spicy_level" });
+ 50:   const selectedBroth = useWatch({ control, name: "preferences.broth" });
+ 51:   const selectedTaste = useWatch({ control, name: "preferences.taste" });
+ 52:   const onSubmit = (data: CreateOrderInput) => {
+ 53:     setError(null);
+ 54:     createOrder.mutate(data);
+ 55:   };
+ 56:   return (
+ 57:     <Card className="w-full max-w-md mx-auto">
+ 58:       <CardHeader>
+ 59:         <CardTitle className="text-center text-xl">
+ 60:           🍜 Seblak Prasmanan
+ 61:         </CardTitle>
+ 62:         <p className="text-center text-sm text-muted-foreground">
+ 63:           Wadah: {bowlId}
+ 64:         </p>
+ 65:       </CardHeader>
+ 66:       <CardContent>
+ 67:         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+ 68:           {}
+ 69:           <div className="space-y-2">
+ 70:             <Label htmlFor="customer_name">Nama kamu</Label>
+ 71:             <Input
+ 72:               id="customer_name"
+ 73:               placeholder="Contoh: Budi"
+ 74:               {...register("customerName")}
+ 75:             />
+ 76:             {errors.customerName && (
+ 77:               <p className="text-sm text-red-500">
+ 78:                 {errors.customerName.message}
+ 79:               </p>
+ 80:             )}
+ 81:           </div>
+ 82:           {}
+ 83:           <div className="space-y-2">
+ 84:             <Label>Level Pedas</Label>
+ 85:             <div className="flex gap-2">
+ 86:               {[1, 2, 3, 4, 5].map((level) => (
+ 87:                 <button
+ 88:                   key={level}
+ 89:                   type="button"
+ 90:                   onClick={() => setValue("preferences.spicy_level", level)}
+ 91:                   className={`flex-1 py-2 rounded-md border text-sm font-medium transition-colors ${
+ 92:                     spicyLevel === level
+ 93:                       ? "bg-red-500 text-white border-red-500"
+ 94:                       : "border-input hover:bg-accent"
+ 95:                   }`}
+ 96:                 >
+ 97:                   {level}🌶️
+ 98:                 </button>
+ 99:               ))}
+100:             </div>
+101:           </div>
+102:           {}
+103:           <div className="space-y-2">
+104:             <Label>Jenis Kuah</Label>
+105:             <div className="flex gap-2">
+106:               {(["kuah", "nyemek", "kering"] as const).map((broth) => (
+107:                 <button
+108:                   key={broth}
+109:                   type="button"
+110:                   onClick={() => setValue("preferences.broth", broth)}
+111:                   className={`flex-1 py-2 rounded-md border text-sm font-medium capitalize transition-colors ${
+112:                     selectedBroth === broth
+113:                       ? "bg-primary text-primary-foreground border-primary"
+114:                       : "border-input hover:bg-accent"
+115:                   }`}
+116:                 >
+117:                   {broth}
+118:                 </button>
+119:               ))}
+120:             </div>
+121:           </div>
+122:           {}
+123:           <div className="space-y-2">
+124:             <Label>Rasa</Label>
+125:             <div className="flex gap-2">
+126:               {tastes.map((taste) => (
+127:                 <button
+128:                   key={taste}
+129:                   type="button"
+130:                   onClick={() => setValue("preferences.taste", taste)}
+131:                   className={`flex-1 py-2 rounded-md border text-sm font-medium capitalize transition-colors ${
+132:                     selectedTaste === taste
+133:                       ? "bg-primary text-primary-foreground border-primary"
+134:                       : "border-input hover:bg-accent"
+135:                   }`}
+136:                 >
+137:                   {taste}
+138:                 </button>
+139:               ))}
+140:             </div>
+141:           </div>
+142:           {}
+143:           <div className="space-y-2">
+144:             <Label htmlFor="extra_notes">
+145:               Catatan tambahan{" "}
+146:               <span className="text-muted-foreground">(opsional)</span>
+147:             </Label>
+148:             <Textarea
+149:               id="extra_notes"
+150:               placeholder="Contoh: tidak pakai kencur"
+151:               rows={2}
+152:               {...register("preferences.extra_notes")}
+153:             />
+154:           </div>
+155:           {error && <p className="text-sm text-red-500 text-center">{error}</p>}
+156:           <Button
+157:             type="submit"
+158:             className="w-full"
+159:             disabled={createOrder.isPending}
+160:           >
+161:             {createOrder.isPending ? "Memproses..." : "Pesan Sekarang →"}
+162:           </Button>
+163:         </form>
+164:       </CardContent>
+165:     </Card>
+166:   );
+167: }
+</file>
+
+<file path="src/features/order/schemas/order.schema.ts">
+ 1: import z from "zod";
+ 2: export const preferencesSchema = z.object({
+ 3:   broth: z.enum(["kuah", "kering", "nyemek"]),
+ 4:   spicy_level: z.number().min(1).max(5),
+ 5:   taste: z.enum(["pedas", "manis", "asin", "asam", "gurih", "normal"]),
+ 6:   extra_notes: z.string().max(200).optional(),
+ 7: });
+ 8: export const createOrderSchema = z.object({
+ 9:   bowlId: z.string().min(1),
+10:   customerName: z.string().min(1, "Nama tidak boleh kosong").max(50),
+11:   preferences: preferencesSchema,
+12: });
+13: export type CreateOrderInput = z.infer<typeof createOrderSchema>;
+14: export type Preferences = z.infer<typeof preferencesSchema>;
+</file>
+
+<file path="src/lib/prisma.ts">
+ 1: import { PrismaClient } from "@/generated/prisma/client";
+ 2: import { PrismaPg } from "@prisma/adapter-pg";
+ 3: import { env } from "prisma/config";
+ 4: const globalForPrisma = global as unknown as {
+ 5:   prisma: PrismaClient;
+ 6: };
+ 7: const adapter = new PrismaPg({
+ 8:   connectionString: env("DATABASE_URL"),
+ 9: });
+10: const prisma =
+11:   globalForPrisma.prisma ||
+12:   new PrismaClient({
+13:     log: ["query"],
+14:     errorFormat: "pretty",
+15:     adapter,
+16:   });
+17: if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
+18: export default prisma;
+</file>
+
+<file path="src/lib/trpc/client.ts">
+1: import { createTRPCReact } from "@trpc/react-query";
+2: import type { AppRouter } from "@/server/routers/_app";
+3: export const trpc = createTRPCReact<AppRouter>();
+</file>
+
+<file path="src/lib/trpc/Provider.tsx">
+ 1: "use client";
+ 2: import { httpBatchLink } from "@trpc/client";
+ 3: import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+ 4: import { useState } from "react";
+ 5: import { trpc } from "./client";
+ 6: export function TRPCProvider({ children }: { children: React.ReactNode }) {
+ 7:   const [queryClient] = useState(() => new QueryClient());
+ 8:   const [trpcClient] = useState(() =>
+ 9:     trpc.createClient({
+10:       links: [
+11:         httpBatchLink({
+12:           url: `${process.env.NEXT_PUBLIC_APP_URL}/api/trpc`,
+13:         }),
+14:       ],
+15:     }),
+16:   );
+17:   return (
+18:     <trpc.Provider client={trpcClient} queryClient={queryClient}>
+19:       <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+20:     </trpc.Provider>
+21:   );
+22: }
+</file>
+
+<file path="src/lib/trpc/server.ts">
+1: import "server-only";
+2: import { createCallerFactory } from "@/server/trpc";
+3: import { appRouter } from "@/server/routers/_app";
+4: import { createContext } from "@/server/context";
+5: const createCaller = createCallerFactory(appRouter);
+6: export const serverClient = createCaller(async () => {
+7:   return createContext();
+8: });
+</file>
+
+<file path="src/lib/utils.ts">
+1: import { clsx, type ClassValue } from "clsx"
+2: import { twMerge } from "tailwind-merge"
+3: export function cn(...inputs: ClassValue[]) {
+4:   return twMerge(clsx(inputs))
+5: }
+</file>
+
+<file path="src/server/context.ts">
+1: import prisma from "@/lib/prisma";
+2: import { FetchCreateContextFnOptions } from "@trpc/server/adapters/fetch";
+3: export async function createContext(opts?: FetchCreateContextFnOptions) {
+4:   return {
+5:     prisma,
+6:     ...opts,
+7:   };
+8: }
+9: export type Context = Awaited<ReturnType<typeof createContext>>;
+</file>
+
+<file path="src/server/routers/_app.ts">
+ 1: import { router } from "../trpc";
+ 2: import { ordersRouter } from "./orders";
+ 3: import { paymentsRouter } from "./payments";
+ 4: import { bowlsRouter } from "./bowls";
+ 5: export const appRouter = router({
+ 6:   orders: ordersRouter,
+ 7:   payments: paymentsRouter,
+ 8:   bowls: bowlsRouter,
+ 9: });
+10: export type AppRouter = typeof appRouter;
+</file>
+
+<file path="src/server/routers/bowls.ts">
+ 1: import { Preferences } from "@/features/order/schemas/order.schema";
+ 2: import { publicProcedure, router } from "../trpc";
+ 3: import { z } from "zod";
+ 4: export const bowlsRouter = router({
+ 5:   getById: publicProcedure
+ 6:     .input(z.object({ id: z.string() }))
+ 7:     .query(async ({ input, ctx }) => {
+ 8:       const bowl = await ctx.prisma.bowl.findUnique({
+ 9:         where: { id: input.id },
+10:       });
+11:       if (!bowl) {
+12:         return null;
+13:       }
+14:       return bowl;
+15:     }),
+16:   getActiveOrder: publicProcedure
+17:     .input(z.object({ bowlId: z.string() }))
+18:     .query(async ({ input, ctx }) => {
+19:       const order = await ctx.prisma.order.findFirst({
+20:         where: {
+21:           bowlId: input.bowlId,
+22:           status: { in: ["waiting", "confirmed", "preparing", "served"] },
+23:         },
+24:         orderBy: { createdAt: "desc" },
+25:       });
+26:       if (!order) {
+27:         return { order: null };
+28:       }
+29:       return {
+30:         order: {
+31:           ...order,
+32:           preferences: order.preferences as Preferences,
+33:         },
+34:       };
+35:     }),
+36: });
+</file>
+
+<file path="src/server/routers/orders.ts">
+  1: import { z } from "zod";
+  2: import { router, publicProcedure } from "../trpc";
+  3: import { createOrderSchema } from "@/features/order/schemas/order.schema";
+  4: import { OrderStatus } from "@/generated/prisma/enums";
+  5: export const ordersRouter = router({
+  6:   create: publicProcedure
+  7:     .input(createOrderSchema)
+  8:     .output(z.object({ order: z.object({ id: z.string() }) }))
+  9:     .mutation(async ({ input, ctx }) => {
+ 10:       const { bowlId, customerName, preferences } = input;
+ 11:       const bowl = await ctx.prisma.bowl.findUnique({
+ 12:         where: { id: bowlId },
+ 13:       });
+ 14:       if (!bowl) {
+ 15:         throw new Error("Wadah tidak ditemukan");
+ 16:       }
+ 17:       if (bowl.isActive) {
+ 18:         throw new Error("Wadah sedang digunakan");
+ 19:       }
+ 20:       const order = await ctx.prisma.$transaction(async (tx) => {
+ 21:         await tx.bowl.update({
+ 22:           where: { id: bowlId },
+ 23:           data: { isActive: true },
+ 24:         });
+ 25:         return tx.order.create({
+ 26:           data: {
+ 27:             bowlId: bowlId,
+ 28:             customerName: customerName,
+ 29:             preferences: preferences,
+ 30:           },
+ 31:         });
+ 32:       });
+ 33:       return { order };
+ 34:     }),
+ 35:   getById: publicProcedure
+ 36:     .input(z.object({ id: z.string() }))
+ 37:     .query(async ({ input, ctx }) => {
+ 38:       const order = await ctx.prisma.order.findUnique({
+ 39:         where: { id: input.id },
+ 40:       });
+ 41:       if (!order) {
+ 42:         throw new Error("Pesanan tidak ditemukan");
+ 43:       }
+ 44:       return { order };
+ 45:     }),
+ 46:   updatePrice: publicProcedure
+ 47:     .input(
+ 48:       z.object({
+ 49:         orderId: z.string(),
+ 50:         totalPrice: z.number().min(1000),
+ 51:       }),
+ 52:     )
+ 53:     .mutation(async ({ input, ctx }) => {
+ 54:       const order = await ctx.prisma.order.findUnique({
+ 55:         where: { id: input.orderId },
+ 56:       });
+ 57:       if (!order) {
+ 58:         throw new Error("Order tidak ditemukan");
+ 59:       }
+ 60:       const updated = await ctx.prisma.$transaction(async (tx) => {
+ 61:         await tx.bowl.update({
+ 62:           where: { id: order.bowlId },
+ 63:           data: { isActive: false },
+ 64:         });
+ 65:         return tx.order.update({
+ 66:           where: { id: input.orderId },
+ 67:           data: {
+ 68:             totalPrice: input.totalPrice,
+ 69:             status: OrderStatus.confirmed,
+ 70:           },
+ 71:         });
+ 72:       });
+ 73:       return { order: updated };
+ 74:     }),
+ 75:   updateStatus: publicProcedure
+ 76:     .input(
+ 77:       z.object({
+ 78:         orderId: z.string(),
+ 79:         status: z.nativeEnum(OrderStatus),
+ 80:       }),
+ 81:     )
+ 82:     .mutation(async ({ input, ctx }) => {
+ 83:       const order = await ctx.prisma.order.update({
+ 84:         where: { id: input.orderId },
+ 85:         data: { status: input.status },
+ 86:       });
+ 87:       return { order };
+ 88:     }),
+ 89:   listActive: publicProcedure.query(async ({ ctx }) => {
+ 90:     const orders = await ctx.prisma.order.findMany({
+ 91:       where: {
+ 92:         status: {
+ 93:           in: [
+ 94:             OrderStatus.waiting,
+ 95:             OrderStatus.confirmed,
+ 96:             OrderStatus.preparing,
+ 97:             OrderStatus.served,
+ 98:           ],
+ 99:         },
+100:       },
+101:       orderBy: { createdAt: "desc" },
+102:       take: 50,
+103:     });
+104:     return { orders };
+105:   }),
+106: });
+</file>
+
+<file path="src/server/trpc.ts">
+1: import { initTRPC } from "@trpc/server";
+2: import type { Context } from "./context";
+3: const t = initTRPC.context<Context>().create();
+4: export const createCallerFactory = t.createCallerFactory;
+5: export const router = t.router;
+6: export const publicProcedure = t.procedure;
+7: export const middleware = t.middleware;
+</file>
+
+<file path="tsconfig.json">
+ 1: {
+ 2:   "compilerOptions": {
+ 3:     "target": "ES2017",
+ 4:     "lib": ["dom", "dom.iterable", "esnext"],
+ 5:     "allowJs": true,
+ 6:     "skipLibCheck": true,
+ 7:     "strict": true,
+ 8:     "noEmit": true,
+ 9:     "esModuleInterop": true,
+10:     "module": "esnext",
+11:     "moduleResolution": "bundler",
+12:     "resolveJsonModule": true,
+13:     "isolatedModules": true,
+14:     "jsx": "react-jsx",
+15:     "incremental": true,
+16:     "plugins": [
+17:       {
+18:         "name": "next"
+19:       }
+20:     ],
+21:     "paths": {
+22:       "@/*": ["./src/*"]
+23:     }
+24:   },
+25:   "include": [
+26:     "next-env.d.ts",
+27:     "**/*.ts",
+28:     "**/*.tsx",
+29:     ".next/types/**/*.ts",
+30:     ".next/dev/types/**/*.ts",
+31:     "**/*.mts"
+32:   ],
+33:   "exclude": ["node_modules"]
+34: }
+</file>
+
+<file path=".gitignore">
+ 1: # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+ 2: 
+ 3: # dependencies
+ 4: /node_modules
+ 5: /.pnp
+ 6: .pnp.*
+ 7: .yarn/*
+ 8: !.yarn/patches
+ 9: !.yarn/plugins
+10: !.yarn/releases
+11: !.yarn/versions
+12: 
+13: # testing
+14: /coverage
+15: 
+16: # next.js
+17: /.next/
+18: /out/
+19: 
+20: # production
+21: /build
+22: 
+23: # misc
+24: .DS_Store
+25: *.pem
+26: 
+27: # debug
+28: npm-debug.log*
+29: yarn-debug.log*
+30: yarn-error.log*
+31: .pnpm-debug.log*
+32: 
+33: # env files (can opt-in for committing if needed)
+34: .env*
+35: 
+36: # vercel
+37: .vercel
+38: 
+39: # typescript
+40: *.tsbuildinfo
+41: next-env.d.ts
+42: 
+43: /src/generated/prisma
+</file>
+
+<file path="src/app/globals.css">
+  1: @import "tailwindcss";
+  2: @import "tw-animate-css";
+  3: @import "shadcn/tailwind.css";
+  4: @custom-variant dark (&:is(.dark *));
+  5: @theme inline {
+  6:   --color-background: var(--background);
+  7:   --color-foreground: var(--foreground);
+  8:   --font-sans: var(--font-geist-sans);
+  9:   --font-mono: var(--font-geist-mono);
+ 10:   --color-sidebar-ring: var(--sidebar-ring);
+ 11:   --color-sidebar-border: var(--sidebar-border);
+ 12:   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+ 13:   --color-sidebar-accent: var(--sidebar-accent);
+ 14:   --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+ 15:   --color-sidebar-primary: var(--sidebar-primary);
+ 16:   --color-sidebar-foreground: var(--sidebar-foreground);
+ 17:   --color-sidebar: var(--sidebar);
+ 18:   --color-chart-5: var(--chart-5);
+ 19:   --color-chart-4: var(--chart-4);
+ 20:   --color-chart-3: var(--chart-3);
+ 21:   --color-chart-2: var(--chart-2);
+ 22:   --color-chart-1: var(--chart-1);
+ 23:   --color-ring: var(--ring);
+ 24:   --color-input: var(--input);
+ 25:   --color-border: var(--border);
+ 26:   --color-destructive: var(--destructive);
+ 27:   --color-accent-foreground: var(--accent-foreground);
+ 28:   --color-accent: var(--accent);
+ 29:   --color-muted-foreground: var(--muted-foreground);
+ 30:   --color-muted: var(--muted);
+ 31:   --color-secondary-foreground: var(--secondary-foreground);
+ 32:   --color-secondary: var(--secondary);
+ 33:   --color-primary-foreground: var(--primary-foreground);
+ 34:   --color-primary: var(--primary);
+ 35:   --color-popover-foreground: var(--popover-foreground);
+ 36:   --color-popover: var(--popover);
+ 37:   --color-card-foreground: var(--card-foreground);
+ 38:   --color-card: var(--card);
+ 39:   --radius-sm: calc(var(--radius) - 4px);
+ 40:   --radius-md: calc(var(--radius) - 2px);
+ 41:   --radius-lg: var(--radius);
+ 42:   --radius-xl: calc(var(--radius) + 4px);
+ 43:   --radius-2xl: calc(var(--radius) + 8px);
+ 44:   --radius-3xl: calc(var(--radius) + 12px);
+ 45:   --radius-4xl: calc(var(--radius) + 16px);
+ 46: }
+ 47: :root {
+ 48:   --radius: 0.625rem;
+ 49:   --background: oklch(1 0 0);
+ 50:   --foreground: oklch(0.129 0.042 264.695);
+ 51:   --card: oklch(1 0 0);
+ 52:   --card-foreground: oklch(0.129 0.042 264.695);
+ 53:   --popover: oklch(1 0 0);
+ 54:   --popover-foreground: oklch(0.129 0.042 264.695);
+ 55:   --primary: oklch(0.208 0.042 265.755);
+ 56:   --primary-foreground: oklch(0.984 0.003 247.858);
+ 57:   --secondary: oklch(0.968 0.007 247.896);
+ 58:   --secondary-foreground: oklch(0.208 0.042 265.755);
+ 59:   --muted: oklch(0.968 0.007 247.896);
+ 60:   --muted-foreground: oklch(0.554 0.046 257.417);
+ 61:   --accent: oklch(0.968 0.007 247.896);
+ 62:   --accent-foreground: oklch(0.208 0.042 265.755);
+ 63:   --destructive: oklch(0.577 0.245 27.325);
+ 64:   --border: oklch(0.929 0.013 255.508);
+ 65:   --input: oklch(0.929 0.013 255.508);
+ 66:   --ring: oklch(0.704 0.04 256.788);
+ 67:   --chart-1: oklch(0.646 0.222 41.116);
+ 68:   --chart-2: oklch(0.6 0.118 184.704);
+ 69:   --chart-3: oklch(0.398 0.07 227.392);
+ 70:   --chart-4: oklch(0.828 0.189 84.429);
+ 71:   --chart-5: oklch(0.769 0.188 70.08);
+ 72:   --sidebar: oklch(0.984 0.003 247.858);
+ 73:   --sidebar-foreground: oklch(0.129 0.042 264.695);
+ 74:   --sidebar-primary: oklch(0.208 0.042 265.755);
+ 75:   --sidebar-primary-foreground: oklch(0.984 0.003 247.858);
+ 76:   --sidebar-accent: oklch(0.968 0.007 247.896);
+ 77:   --sidebar-accent-foreground: oklch(0.208 0.042 265.755);
+ 78:   --sidebar-border: oklch(0.929 0.013 255.508);
+ 79:   --sidebar-ring: oklch(0.704 0.04 256.788);
+ 80: }
+ 81: .dark {
+ 82:   --background: oklch(0.129 0.042 264.695);
+ 83:   --foreground: oklch(0.984 0.003 247.858);
+ 84:   --card: oklch(0.208 0.042 265.755);
+ 85:   --card-foreground: oklch(0.984 0.003 247.858);
+ 86:   --popover: oklch(0.208 0.042 265.755);
+ 87:   --popover-foreground: oklch(0.984 0.003 247.858);
+ 88:   --primary: oklch(0.929 0.013 255.508);
+ 89:   --primary-foreground: oklch(0.208 0.042 265.755);
+ 90:   --secondary: oklch(0.279 0.041 260.031);
+ 91:   --secondary-foreground: oklch(0.984 0.003 247.858);
+ 92:   --muted: oklch(0.279 0.041 260.031);
+ 93:   --muted-foreground: oklch(0.704 0.04 256.788);
+ 94:   --accent: oklch(0.279 0.041 260.031);
+ 95:   --accent-foreground: oklch(0.984 0.003 247.858);
+ 96:   --destructive: oklch(0.704 0.191 22.216);
+ 97:   --border: oklch(1 0 0 / 10%);
+ 98:   --input: oklch(1 0 0 / 15%);
+ 99:   --ring: oklch(0.551 0.027 264.364);
+100:   --chart-1: oklch(0.488 0.243 264.376);
+101:   --chart-2: oklch(0.696 0.17 162.48);
+102:   --chart-3: oklch(0.769 0.188 70.08);
+103:   --chart-4: oklch(0.627 0.265 303.9);
+104:   --chart-5: oklch(0.645 0.246 16.439);
+105:   --sidebar: oklch(0.208 0.042 265.755);
+106:   --sidebar-foreground: oklch(0.984 0.003 247.858);
+107:   --sidebar-primary: oklch(0.488 0.243 264.376);
+108:   --sidebar-primary-foreground: oklch(0.984 0.003 247.858);
+109:   --sidebar-accent: oklch(0.279 0.041 260.031);
+110:   --sidebar-accent-foreground: oklch(0.984 0.003 247.858);
+111:   --sidebar-border: oklch(1 0 0 / 10%);
+112:   --sidebar-ring: oklch(0.551 0.027 264.364);
+113: }
+114: @layer base {
+115:   * {
+116:     @apply border-border outline-ring/50;
+117:   }
+118:   body {
+119:     @apply bg-background text-foreground;
+120:   }
+121: }
+</file>
+
+<file path="src/app/layout.tsx">
+ 1: import type { Metadata } from "next";
+ 2: import { Geist, Geist_Mono } from "next/font/google";
+ 3: import "./globals.css";
+ 4: import { TRPCProvider } from "@/lib/trpc/Provider";
+ 5: const geistSans = Geist({
+ 6:   variable: "--font-geist-sans",
+ 7:   subsets: ["latin"],
+ 8: });
+ 9: const geistMono = Geist_Mono({
+10:   variable: "--font-geist-mono",
+11:   subsets: ["latin"],
+12: });
+13: export const metadata: Metadata = {
+14:   title: "Create Next App",
+15:   description: "Generated by create next app",
+16: };
+17: export default function RootLayout({
+18:   children,
+19: }: Readonly<{
+20:   children: React.ReactNode;
+21: }>) {
+22:   return (
+23:     <html lang="en">
+24:       <body
+25:         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+26:       >
+27:         <TRPCProvider>{children}</TRPCProvider>
+28:       </body>
+29:     </html>
+30:   );
+31: }
+</file>
+
+<file path="src/app/order/[bowlId]/page.tsx">
+ 1: import { OrderForm } from "@/features/order/components/OrderForm";
+ 2: import { Card, CardContent } from "@/components/ui/card";
+ 3: import { serverClient } from "@/lib/trpc/server";
+ 4: interface Props {
+ 5:   params: Promise<{ bowlId: string }>;
+ 6: }
+ 7: export default async function OrderPage({ params }: Props) {
+ 8:   const { bowlId } = await params;
+ 9:   const bowl = await serverClient.bowls.getById({ id: bowlId });
+10:   if (!bowl) {
+11:     return (
+12:       <main className="min-h-screen flex items-center justify-center p-4">
+13:         <Card className="w-full max-w-md">
+14:           <CardContent className="pt-6 text-center space-y-2">
+15:             <p className="text-4xl">❓</p>
+16:             <p className="font-semibold">Wadah tidak ditemukan</p>
+17:             <p className="text-sm text-muted-foreground">
+18:               Pastikan kamu scan QR code yang benar
+19:             </p>
+20:           </CardContent>
+21:         </Card>
+22:       </main>
+23:     );
+24:   }
+25:   if (bowl.isActive) {
+26:     return (
+27:       <main className="min-h-screen flex items-center justify-center p-4">
+28:         <Card className="w-full max-w-md">
+29:           <CardContent className="pt-6 text-center space-y-2">
+30:             <p className="text-4xl">🚫</p>
+31:             <p className="font-semibold">Wadah sedang digunakan</p>
+32:             <p className="text-sm text-muted-foreground">
+33:               Silakan ambil wadah lain dari area prasmanan
+34:             </p>
+35:           </CardContent>
+36:         </Card>
+37:       </main>
+38:     );
+39:   }
+40:   return (
+41:     <main className="min-h-screen flex items-center justify-center p-4">
+42:       <OrderForm bowlId={bowlId} />
+43:     </main>
+44:   );
+45: }
+</file>
+
+<file path="package.json">
+ 1: {
+ 2:   "name": "warung-seblak-app",
+ 3:   "version": "0.1.0",
+ 4:   "private": true,
+ 5:   "scripts": {
+ 6:     "dev": "next dev",
+ 7:     "build": "next build",
+ 8:     "start": "next start",
+ 9:     "lint": "eslint",
+10:     "db:push": "prisma db push",
+11:     "db:generate": "prisma generate",
+12:     "db:migrate": "prisma migrate dev",
+13:     "db:studio": "prisma studio",
+14:     "db:seed": "prisma db seed"
+15:   },
+16:   "dependencies": {
+17:     "@hookform/resolvers": "^5.2.2",
+18:     "@prisma/adapter-pg": "^7.4.0",
+19:     "@prisma/client": "^7.4.0",
+20:     "@supabase/ssr": "^0.8.0",
+21:     "@supabase/supabase-js": "^2.96.0",
+22:     "@tanstack/react-query": "^5.90.21",
+23:     "@trpc/client": "^11.10.0",
+24:     "@trpc/next": "^11.10.0",
+25:     "@trpc/react-query": "^11.10.0",
+26:     "@trpc/server": "^11.10.0",
+27:     "class-variance-authority": "^0.7.1",
+28:     "clsx": "^2.1.1",
+29:     "lucide-react": "^0.574.0",
+30:     "midtrans-client": "^1.4.3",
+31:     "next": "16.1.6",
+32:     "next-themes": "^0.4.6",
+33:     "qrcode": "^1.5.4",
+34:     "radix-ui": "^1.4.3",
+35:     "react": "19.2.3",
+36:     "react-dom": "19.2.3",
+37:     "react-hook-form": "^7.71.1",
+38:     "sonner": "^2.0.7",
+39:     "tailwind-merge": "^3.4.1",
+40:     "zod": "^4.3.6"
+41:   },
+42:   "devDependencies": {
+43:     "@tailwindcss/postcss": "^4",
+44:     "@types/node": "^20",
+45:     "@types/pg": "^8.16.0",
+46:     "@types/qrcode": "^1.5.6",
+47:     "@types/react": "^19",
+48:     "@types/react-dom": "^19",
+49:     "babel-plugin-react-compiler": "1.0.0",
+50:     "eslint": "^9",
+51:     "eslint-config-next": "16.1.6",
+52:     "prisma": "^7.4.0",
+53:     "shadcn": "^3.8.5",
+54:     "tailwindcss": "^4",
+55:     "tsx": "^4.21.0",
+56:     "tw-animate-css": "^1.4.0",
+57:     "typescript": "^5"
+58:   }
+59: }
+</file>
+
+</files>
