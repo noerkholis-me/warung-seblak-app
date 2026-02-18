@@ -14,6 +14,7 @@
     "db:seed": "prisma db seed"
   },
   "dependencies": {
+    "@clerk/nextjs": "^6.37.5",
     "@hookform/resolvers": "^5.2.2",
     "@prisma/adapter-pg": "^7.4.0",
     "@prisma/client": "^7.4.0",
@@ -36,6 +37,7 @@
     "react-dom": "19.2.3",
     "react-hook-form": "^7.71.1",
     "sonner": "^2.0.7",
+    "superjson": "^2.2.6",
     "tailwind-merge": "^3.4.1",
     "zod": "^4.3.6"
   },
