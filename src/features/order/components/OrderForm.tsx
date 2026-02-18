@@ -45,7 +45,7 @@ export function OrderForm({ bowlId }: OrderFormProps) {
       bowlId: bowlId,
       preferences: {
         broth: "kuah",
-        spicyLevel: 3,
+        spicy_level: 3,
         taste: "normal",
       },
     },
@@ -53,7 +53,7 @@ export function OrderForm({ bowlId }: OrderFormProps) {
 
   const tastes = Object.values(preferencesSchema.shape.taste.enum);
 
-  const spicyLevel = useWatch({ control, name: "preferences.spicyLevel" });
+  const spicyLevel = useWatch({ control, name: "preferences.spicy_level" });
   const selectedBroth = useWatch({ control, name: "preferences.broth" });
   const selectedTaste = useWatch({ control, name: "preferences.taste" });
 
@@ -97,7 +97,7 @@ export function OrderForm({ bowlId }: OrderFormProps) {
                 <button
                   key={level}
                   type="button"
-                  onClick={() => setValue("preferences.spicyLevel", level)}
+                  onClick={() => setValue("preferences.spicy_level", level)}
                   className={`flex-1 py-2 rounded-md border text-sm font-medium transition-colors ${
                     spicyLevel === level
                       ? "bg-red-500 text-white border-red-500"
@@ -162,7 +162,7 @@ export function OrderForm({ bowlId }: OrderFormProps) {
               id="extra_notes"
               placeholder="Contoh: tidak pakai kencur"
               rows={2}
-              {...register("preferences.extraNotes")}
+              {...register("preferences.extra_notes")}
             />
           </div>
 
