@@ -1,6 +1,6 @@
 import { OrderForm } from "@/features/order/components/OrderForm";
 import { Card, CardContent } from "@/components/ui/card";
-import prisma from "@/lib/prisma";
+import { serverClient } from "@/lib/trpc/server";
 
 interface Props {
   params: Promise<{ bowlId: string }>;
@@ -9,9 +9,7 @@ interface Props {
 export default async function OrderPage({ params }: Props) {
   const { bowlId } = await params;
 
-  const bowl = await prisma.bowl.findUnique({
-    where: { id: bowlId },
-  });
+  const bowl = await serverClient.bowls.getById({ id: bowlId });
 
   if (!bowl) {
     return (
