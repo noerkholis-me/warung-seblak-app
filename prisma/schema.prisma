@@ -13,7 +13,6 @@ datasource db {
   provider = "postgresql"
 }
 
-
 model Bowl {
   id        String   @id
   isActive  Boolean  @default(false) @map("is_active")
@@ -24,31 +23,58 @@ model Bowl {
 }
 
 model Order {
-  id            String    @id @default(uuid())
-  bowlId        String    @map("bowl_id")
-  customerName  String    @map("customer_name")
-  preferences   Json      @default("{}")
-  totalPrice    Int?      @map("total_price")
-  paymentMethod String?   @map("payment_method")
-  paymentStatus String    @default("pending") @map("payment_status")
-  status        String    @default("waiting")
-  createdAt     DateTime  @default(now()) @map("created_at")
-  updatedAt     DateTime  @updatedAt @map("updated_at")
-  bowl          Bowl      @relation(fields: [bowlId], references: [id])
+  id            String         @id @default(uuid())
+  bowlId        String         @map("bowl_id")
+  customerName  String         @map("customer_name")
+  preferences   Json           @default("{}")
+  totalPrice    Int?           @map("total_price")
+  paymentMethod PaymentMethod? @map("payment_method")
+  paymentStatus PaymentStatus  @default(pending) @map("payment_status")
+  status        OrderStatus    @default(waiting)
+  createdAt     DateTime       @default(now()) @map("created_at")
+  updatedAt     DateTime       @updatedAt @map("updated_at")
+  bowl          Bowl           @relation(fields: [bowlId], references: [id])
   payments      Payment[]
 
   @@map("orders")
 }
 
 model Payment {
-  id              String   @id @default(uuid())
-  orderId         String   @map("order_id")
+  id              String          @id @default(uuid())
+  orderId         String          @map("order_id")
   amount          Int
-  paymentMethod   String   @map("payment_method")
-  midtransOrderId String?  @unique @map("midtrans_order_id")
-  midtransStatus  String?  @map("midtrans_status")
-  createdAt       DateTime @default(now()) @map("created_at")
-  order           Order    @relation(fields: [orderId], references: [id])
+  paymentMethod   PaymentMethod   @map("payment_method")
+  midtransOrderId String?         @unique @map("midtrans_order_id")
+  midtransStatus  MidtransStatus? @map("midtrans_status")
+  createdAt       DateTime        @default(now()) @map("created_at")
+  order           Order           @relation(fields: [orderId], references: [id])
 
   @@map("payments")
+}
+
+enum OrderStatus {
+  waiting
+  confirmed
+  preparing
+  served
+  completed
+}
+
+enum PaymentStatus {
+  pending
+  paid
+}
+
+enum PaymentMethod {
+  cash
+  qris
+}
+
+enum MidtransStatus {
+  pending
+  settlement
+  expire
+  cancel
+  deny
+  failure
 }
